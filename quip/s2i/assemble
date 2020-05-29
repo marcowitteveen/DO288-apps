@@ -1,0 +1,36 @@
+elif [ -f "${S2I_SOURCE_DIR}/Dockerfile" ]; then
+  # This is a S2I binary build coming from fabric8-maven-plugin
+  echo "S2I binary build from fabric8-maven-plugin detected"
+  if [ -d "${S2I_SOURCE_DIR}/maven" ]; then
+    binary_dir="${S2I_SOURCE_DIR}/maven"
+  elif [ -d "${S2I_SOURCE_DIR}/deployments" ]; then
+    binary_dir="${S2I_SOURCE_DIR}/deployments"
+  elif [ $(find "${S2I_SOURCE_DIR}" -maxdepth 1 -type d | grep -v -e "^${S2I_SOURCE_DIR}$" | wc -l) == 1 ]; then
+    # Found a single directory, take this
+    binary_dir=$(find "${S2I_SOURCE_DIR}" -maxdepth 1 -type d | grep -v -e "^${S2I_SOURCE_DIR}$")
+  else
+    check_error "No single directory found in ${S2I_SOURCE_DIR} but:\n $(ls -l ${S2I_SOURCE_DIR})" 1
+  fi
+  echo "Copying binaries from ${binary_dir} to ${DEPLOYMENTS_DIR} ..."
+  copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
+  check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?
+else
+  echo "S2I source build with plain binaries detected"
+  if [ -d "${S2I_SOURCE_DIR}/deployments" ]; then
+    default_binary_dir="${S2I_SOURCE_DIR}/deployments"
+  else
+    default_binary_dir="${S2I_SOURCE_DIR}"
+  fi
+  binary_dir="${ARTIFACT_DIR:-${default_binary_dir}}"
+  # Assuming that the source already contains compiled artefacts
+  echo "Copying binaries from ${binary_dir} to ${DEPLOYMENTS_DIR} ..."
+  copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
+  check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?
+fi
+
+# Remove java tmp perf data dir owned by 185
+rm -rf /tmp/hsperfdata_jboss
+
+echo "... done"
+
+

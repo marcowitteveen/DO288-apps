@@ -1,0 +1,12 @@
+h-4.2$ cat scl-enable-maven 
+source /opt/rh/rh-maven35/enable
+sh-4.2$ cat /opt/rh/rh-maven35/enable
+# Generic variables
+export PATH="/opt/rh/rh-maven35/root/usr/bin:${PATH:-/bin:/usr/bin}"
+export MANPATH="/opt/rh/rh-maven35/root/usr/share/man:${MANPATH}"
+export PYTHONPATH="/opt/rh/rh-maven35/root/usr/lib/python2.7/site-packages${PYTHONPATH:+:}${PYTHONPATH:-}"
+
+export JAVACONFDIRS="/opt/rh/rh-maven35/root/etc/java${JAVACONFDIRS:+:}${JAVACONFDIRS:-}"
+export XDG_CONFIG_DIRS="/opt/rh/rh-maven35/root/etc/xdg:${XDG_CONFIG_DIRS:-/etc/xdg}"
+export XDG_DATA_DIRS="/opt/rh/rh-maven35/root/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+
